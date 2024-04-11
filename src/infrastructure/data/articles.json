@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1",
+    "title": "First Article",
+    "content": "Itachi se fait plier en deux par Madara ( Mythe ou réalité )",
+    "authorId": "1",
+    "categoryId": "1"
+  },
+  {
+    "title": "New Article",
+    "content": "This is the content of the new article.",
+    "authorId": "2",
+    "categoryId": "2",
+    "userId": "2"
+  }
+]
