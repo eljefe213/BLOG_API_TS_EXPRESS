@@ -13,7 +13,7 @@ export class AuthController {
                 res.status(500).send({ message: 'Internal server error' });
                 return;
             }
-            const token = jwt.sign({ userId: '1', username: 'admin' }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            const token = jwt.sign({ userId: '1', username }, process.env.JWT_SECRET, { expiresIn: '1h' });
             res.json({ token });
         } else {
             res.status(401).json({ message: 'Authentication failed' });

@@ -5,8 +5,14 @@ import { categoryRouter } from './infrastructure/web/routes/categoryRoutes';
 import { userRouter } from './infrastructure/web/routes/userRoutes';
 import { commentRouter } from './infrastructure/web/routes/commentRoutes';
 import { authRouter } from './infrastructure/web/routes/authRoutes';
+
+
+const setupSwagger = require('../swaggerConfig'); 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Configuration de Swagger
+setupSwagger(app);
 
 app.use(express.json()); // Middleware pour parser le JSON
 
@@ -23,6 +29,6 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Swagger UI available on http://localhost:${PORT}/api-docs`);
 });
 
-export default app;

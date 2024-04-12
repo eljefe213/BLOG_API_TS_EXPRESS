@@ -2,7 +2,7 @@ import { ArticleRepository } from '../../infrastructure/repositories/ArticleRepo
 import { Article } from '../entities/Article';
 
 export class ArticleService {
-    private articleRepository: ArticleRepository;
+    private articleRepository:  ArticleRepository;
 
     constructor(articleRepository: ArticleRepository) {
         this.articleRepository = articleRepository;
