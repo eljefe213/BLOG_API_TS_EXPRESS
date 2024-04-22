@@ -11,7 +11,7 @@ export class CommentRepository {
 
     private loadComments(): void {
         try {
-            const filePath = path.join(__dirname, 'path/to/your/comments.json');
+            const filePath = path.join(__dirname, '../domain/entities/Comment');
             const fileData = fs.readFileSync(filePath, 'utf-8');
             this.comments = JSON.parse(fileData);
             console.log("Comments loaded:", this.comments);  // Affiche les commentaires chargés
