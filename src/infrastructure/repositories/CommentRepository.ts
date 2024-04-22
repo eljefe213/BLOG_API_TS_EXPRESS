@@ -11,7 +11,7 @@ export class CommentRepository {
 
     private loadComments(): void {
         try {
-            const filePath = path.join(__dirname, '../domain/entities/Comment');
+            const filePath = path.join(__dirname, '../data/comments.json');
             const fileData = fs.readFileSync(filePath, 'utf-8');
             this.comments = JSON.parse(fileData);
             console.log("Comments loaded:", this.comments);  // Affiche les commentaires chargés
@@ -48,7 +48,7 @@ export class CommentRepository {
 
     private persistComments(): void {
         try {
-            const filePath = path.join(__dirname, 'path/to/your/comments.json');
+            const filePath = path.join(__dirname, '../data/comments.json');
             fs.writeFileSync(filePath, JSON.stringify(this.comments, null, 2), 'utf-8');
         } catch (error) {
             console.error('Failed to save comments to file:', error);
