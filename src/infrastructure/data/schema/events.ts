@@ -3,12 +3,9 @@ import { users } from './';
 
 export const events = pgTable('events', {
     id: uuid('id').defaultRandom().primaryKey(),
-    organizerId: uuid('organizerId').references(() => users.id).onDelete('CASCADE').notNull(),
     title: text('title').notNull(),
+    author: uuid('author').references(() => users.id).notNull(),
     description: text('description').notNull(),
-    location: text('location').notNull(),
-    startDate: timestamp('startDate').notNull(),
-    endDate: timestamp('endDate').notNull(),
-    isPublic: boolean('isPublic').default(true),
-    imageUrl: text('imageUrl').nullable()
+    date: timestamp('date').defaultNow().notNull(),
+    isPublic: boolean('isPublic').default(true)
 });
