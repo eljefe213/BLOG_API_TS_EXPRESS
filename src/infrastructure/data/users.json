@@ -1,8 +1,0 @@
-[
-    {
-      "id": "1",
-      "username": "userone",
-      "email": "userone@example.com",
-      "passwordHash": "hashedpassword1"
-    }
-  ]
