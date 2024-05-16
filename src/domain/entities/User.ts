@@ -1,8 +1,9 @@
-export interface User {
-    id: string;
-    username: string;
-    email: string;
-    passwordHash: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
+import { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { users } from "../../infrastructure/data/schema/users";
+
+
+export type User = InferSelectModel<typeof users>;
+export type NewUser = InferInsertModel<typeof users>;
+
+
+export type UserColumns = { [K in keyof User]?: boolean }

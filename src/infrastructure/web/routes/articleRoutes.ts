@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { ArticleController } from '../controllers/ArticleController';
 import { ArticleService } from '../../../domain/services/ArticleService';
-import { ArticleRepository } from '../../repositories/ArticleRepository';
+import { ArticleRepository } from '../../repositories/PostRepository';
 import { authMiddleware } from '../../../middlewares/authMiddleware';
 
 export const articleRouter = Router();

@@ -1,5 +1,5 @@
-import { ArticleRepository } from '../../infrastructure/repositories/ArticleRepository';
-import { Article } from '../entities/Article';
+import { ArticleRepository } from '../../infrastructure/repositories/PostRepository';
+import { Article } from '../entities/Post';
 
 export class ArticleService {
     private articleRepository:  ArticleRepository;

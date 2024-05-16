@@ -1,6 +1,6 @@
 import { ArticleService } from '../domain/services/ArticleService';
-import { ArticleRepository } from '../infrastructure/repositories/ArticleRepository';
-import { Article } from '../domain/entities/Article';  
+import { ArticleRepository } from '../infrastructure/repositories/PostRepository';
+import { Article } from '../domain/entities/Post';  
 
 describe('ArticleService', () => {
   let service: ArticleService;

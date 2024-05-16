@@ -1,57 +1,86 @@
-import fs from 'fs';
-import path from 'path';
-import { Comment } from '../../domain/entities/Comment';
+import { db } from "../data";
+import { Comment, NewComment } from "../../domain/entities/Comment";
+import { comments, posts, users } from "../data/schema";
+import { and, eq } from "drizzle-orm";
 
+/**
+ * Repository qui gère le CRUD des commentaires
+ */
 export class CommentRepository {
-    private comments: Comment[] = [];
 
-    constructor() {
-        this.loadComments();
-    }
-
-    private loadComments(): void {
+    getCommentById(id: string) {
         try {
-            const filePath = path.join(__dirname, '../data/comments.json');
-            const fileData = fs.readFileSync(filePath, 'utf-8');
-            this.comments = JSON.parse(fileData);
-            console.log("Comments loaded:", this.comments);  // Affiche les commentaires chargés
-        } catch (error) {
-            console.error('Failed to load comments from file:', error);
+            return db.select({
+                id: comments.id,
+                content: comments.content,
+                date: comments.date,
+                author: {
+                    id: users.id,
+                    username: users.username
+                }
+            }).from(comments)
+            .leftJoin(
+                users, eq(users.id, comments.author)
+            ).where(
+                eq(comments.id, id)
+            ).execute();
+        } catch(err) {
+            console.error(err);
+            throw new Error('Impossible de récupérer le commentaire');
         }
     }
-    
-    public findById(id: string): Comment | undefined {
-        console.log("Searching for comment with ID:", id);  // Affiche l'ID recherché
-        const comment = this.comments.find(comment => comment.id === id);
-        console.log("Comment found:", comment);  // Affiche le commentaire trouvé ou undefined
-        return comment;
-    }
 
-    public findAll(): Comment[] {
-        return this.comments;
-    }
-
-    public findByArticleId(articleId: string): Comment[] {
-        return this.comments.filter(comment => comment.articleId === articleId);
-    }
-
-    public save(comment: Comment): Comment {
-        this.comments.push(comment);
-        this.persistComments(); // Call this function if you decide to persist changes back to the file
-        return comment;
-    }
-
-    public delete(id: string): void {
-        this.comments = this.comments.filter(comment => comment.id !== id);
-        this.persistComments(); // Call this function if you decide to persist changes back to the file
-    }
-
-    private persistComments(): void {
+    deleteCommentById(id: string, userId: string) {
         try {
-            const filePath = path.join(__dirname, '../data/comments.json');
-            fs.writeFileSync(filePath, JSON.stringify(this.comments, null, 2), 'utf-8');
-        } catch (error) {
-            console.error('Failed to save comments to file:', error);
+            return db.delete(comments).where(
+                and(
+                    eq(comments.id, id),
+                    eq(comments.author, userId)
+                )
+            ).execute();
+        } catch(err) {
+            console.error(err);
+            throw new Error('Impossible de supprimer le commentaire');
         }
     }
+
+    createComment(comment: NewComment) {
+        try {
+            return db.insert(comments).values(comment).execute();
+        } catch (err) {
+            console.error(err);
+            throw new Error('Impossible de créer le commentaire');
+        }
+    }
+
+
+    /**
+     * Récupère tous les commentaires du fichier comments.json
+     */
+    getAllComments() {
+        try {
+            return db.select({
+                id: comments.id,
+                content: comments.content,
+                date: comments.date,
+                post: {
+                    id: posts.id,
+                    title: posts.title
+                },
+                author: {
+                    id: users.id,
+                    username: users.username
+                }
+            }).from(comments)
+            .leftJoin(
+                users, eq(users.id, comments.author)
+            ).leftJoin(
+                posts, eq(posts.id, comments.postId)
+            ).execute();
+        } catch(err) {
+            console.error(err);
+            throw new Error('Impossible de récupérer les commentaires');
+        }
+    }
+
 }
