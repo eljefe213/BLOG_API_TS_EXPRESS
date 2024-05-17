@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { CategoryService } from '../../../domain/services/CategoryService';
 import { response } from '../../../utils/response';
-import { CategoryRepository } from '../../infrastructure/repositories/CategoryRepository'; 
+import { CategoryRepository } from '../../repositories/CategoryRepository'; 
 
 // Créez une instance de CategoryRepository
 const categoryRepository = new CategoryRepository();
