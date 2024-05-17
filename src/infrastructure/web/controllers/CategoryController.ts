@@ -1,37 +1,83 @@
 import { Request, Response } from 'express';
 import { CategoryService } from '../../../domain/services/CategoryService';
-import { apiResponse } from '../../../utils/apiResponse';
+import { response } from '../../../utils/response';
+import { CategoryRepository } from '../../infrastructure/repositories/CategoryRepository'; 
 
-export class CategoryController {
-    private categoryService: CategoryService;
+// Créez une instance de CategoryRepository
+const categoryRepository = new CategoryRepository();
 
-    constructor(categoryService: CategoryService) {
-        this.categoryService = categoryService;
+// Passez l'instance de CategoryRepository à CategoryService lors de son instanciation
+const categoryService = new CategoryService(categoryRepository);
+
+export const getAllCategories = async (req: Request, res: Response) => {
+    try {
+        const categories = await categoryService.getAllCategories();
+        response(res, { statusCode: 200, message: 'OK', data: categories });
+    } catch (error) {
+        console.error(error);
+        response(res, { statusCode: 500, message: 'Internal server error' });
     }
+};
 
-    public getAllCategories(req: Request, res: Response): void {
-        const categories = this.categoryService.getAllCategories();
-        res.json(apiResponse(categories));
-    }
-
-    public getCategoryById(req: Request, res: Response): void {
-        const { id } = req.params;
-        const category = this.categoryService.getCategoryById(id);
-        if (category) {
-            res.json(apiResponse(category));
+export const getCategoryById = async (req: Request, res: Response) => {
+    try {
+        const categoryId = req.params.id;
+        const category = await categoryService.getCategoryById(categoryId);
+        if (!category) {
+            response(res, { statusCode: 404, message: 'Category not found' });
         } else {
-            res.status(404).json(apiResponse(null, 'Category not found', false));
+            response(res, { statusCode: 200, message: 'OK', data: category });
         }
+    } catch (error) {
+        console.error(error);
+        response(res, { statusCode: 500, message: 'Internal server error' });
     }
+};
 
-    public createCategory(req: Request, res: Response): void {
-        const category = this.categoryService.createCategory(req.body);
-        res.status(201).json(apiResponse(category));
-    }
+export const createCategory = async (req: Request, res: Response) => {
+    try {
+        const { name } = req.body;
+        if (!name) {
+            return response(res, { statusCode: 400, message: 'Name is required' });
+        }
 
-    public deleteCategory(req: Request, res: Response): void {
-        const { id } = req.params;
-        this.categoryService.deleteCategory(id);
-        res.status(204).send();
+        await categoryService.createCategory({
+            name,
+            postId: ''
+        });
+        response(res, { statusCode: 201, message: 'Category created' });
+    } catch (error) {
+        console.error(error);
+        response(res, { statusCode: 500, message: 'Internal server error' });
     }
-}
+};
+
+export const updateCategory = async (req: Request, res: Response) => {
+    try {
+        const categoryId = req.params.id;
+        const { name } = req.body;
+        if (!name) {
+            return response(res, { statusCode: 400, message: 'Name is required' });
+        }
+
+        await categoryService.updateCategory({
+            id: categoryId, name,
+            postId: ''
+        });
+        response(res, { statusCode: 200, message: 'Category updated' });
+    } catch (error) {
+        console.error(error);
+        response(res, { statusCode: 500, message: 'Internal server error' });
+    }
+};
+
+export const deleteCategoryById = async (req: Request, res: Response) => {
+    try {
+        const categoryId = req.params.id;
+        await categoryService.deleteCategoryById(categoryId);
+        response(res, { statusCode: 200, message: 'Category deleted' });
+    } catch (error) {
+        console.error(error);
+        response(res, { statusCode: 500, message: 'Internal server error' });
+    }
+};
