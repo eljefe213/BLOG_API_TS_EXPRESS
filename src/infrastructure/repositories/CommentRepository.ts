@@ -1,6 +1,6 @@
 import { db } from "../data";
-import { Comment, NewComment } from "../../domain/entities/Comment";
 import { comments, posts, users } from "../data/schema";
+import { Comment, NewComment, CommentColumns } from "../../domain/entities/Comment";
 import { and, eq } from "drizzle-orm";
 
 /**
@@ -8,79 +8,104 @@ import { and, eq } from "drizzle-orm";
  */
 export class CommentRepository {
 
-    getCommentById(id: string) {
+    /**
+     * Récupère tous les commentaires
+     */
+    async getAllComments(columns: CommentColumns = {}): Promise<Partial<Comment>[]> {
         try {
-            return db.select({
-                id: comments.id,
-                content: comments.content,
-                date: comments.date,
-                author: {
-                    id: users.id,
-                    username: users.username
+            return await db.query.comments.findMany({
+                columns,
+                with: {
+                    author: {
+                        columns: {
+                            id: true,
+                            username: true
+                        }
+                    },
+                    post: {
+                        columns: {
+                            id: true,
+                            title: true
+                        }
+                    }
                 }
-            }).from(comments)
-            .leftJoin(
-                users, eq(users.id, comments.author)
-            ).where(
-                eq(comments.id, id)
-            ).execute();
-        } catch(err) {
+            });
+        } catch (err) {
+            console.error(err);
+            throw new Error('Impossible de récupérer les commentaires');
+        }
+    }
+
+    /**
+     * Récupère un commentaire en fonction de son id
+     */
+    async getCommentById(id: string, columns: CommentColumns = {}): Promise<Partial<Comment> | undefined> {
+        try {
+            return await db.query.comments.findFirst({
+                where: eq(comments.id, id),
+                columns,
+                with: {
+                    author: {
+                        columns: {
+                            id: true,
+                            username: true
+                        }
+                    },
+                    post: {
+                        columns: {
+                            id: true,
+                            title: true
+                        }
+                    }
+                }
+            });
+        } catch (err) {
             console.error(err);
             throw new Error('Impossible de récupérer le commentaire');
         }
     }
 
-    deleteCommentById(id: string, userId: string) {
+    /**
+     * Crée un nouveau commentaire
+     */
+    async createComment(comment: NewComment): Promise<void> {
         try {
-            return db.delete(comments).where(
-                and(
-                    eq(comments.id, id),
-                    eq(comments.author, userId)
-                )
-            ).execute();
-        } catch(err) {
-            console.error(err);
-            throw new Error('Impossible de supprimer le commentaire');
-        }
-    }
-
-    createComment(comment: NewComment) {
-        try {
-            return db.insert(comments).values(comment).execute();
+            await db.insert(comments).values(comment).execute();
         } catch (err) {
             console.error(err);
             throw new Error('Impossible de créer le commentaire');
         }
     }
 
-
     /**
-     * Récupère tous les commentaires du fichier comments.json
+     * Supprime un commentaire en fonction de son id et de l'id de l'utilisateur
      */
-    getAllComments() {
+    async deleteCommentById(id: string, userId: string): Promise<void> {
         try {
-            return db.select({
-                id: comments.id,
-                content: comments.content,
-                date: comments.date,
-                post: {
-                    id: posts.id,
-                    title: posts.title
-                },
-                author: {
-                    id: users.id,
-                    username: users.username
-                }
-            }).from(comments)
-            .leftJoin(
-                users, eq(users.id, comments.author)
-            ).leftJoin(
-                posts, eq(posts.id, comments.postId)
+            await db.delete(comments).where(
+                and(
+                    eq(comments.id, id),
+                    eq(comments.author, userId)
+                )
             ).execute();
-        } catch(err) {
+        } catch (err) {
             console.error(err);
-            throw new Error('Impossible de récupérer les commentaires');
+            throw new Error('Impossible de supprimer le commentaire');
         }
     }
 
+    /**
+     * Met à jour un commentaire
+     */
+    async updateComment(comment: Comment): Promise<void> {
+        try {
+            await db.update(comments)
+                .set(comment)
+                .where(eq(comments.id, comment.id))
+                .execute();
+        } catch (err) {
+            console.error(err);
+            throw new Error('Impossible de mettre à jour le commentaire');
+        }
+    }
 }
