@@ -38,10 +38,12 @@
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.30.10",
     "express": "^4.19.2",
+    "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.5",
     "postgres": "^3.4.4",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "yaml": "^2.4.2"
   }
 }

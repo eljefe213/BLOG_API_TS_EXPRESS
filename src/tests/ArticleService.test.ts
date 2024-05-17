@@ -1,17 +1,17 @@
-import { ArticleService } from '../domain/services/PostService';
-import { ArticleRepository } from '../infrastructure/repositories/PostRepository';
-import { Article } from '../domain/entities/Post';  
+import { PostService } from '../domain/services/PostService';
+import { PostsRepository } from '../infrastructure/repositories/PostRepository';
+import { Post } from '../domain/entities/Post';  
 
-describe('ArticleService', () => {
-  let service: ArticleService;
-  let repo: ArticleRepository;
+describe('PostService', () => {
+  let service: PostService;
+  let repo: PostRepository;
 
   beforeEach(() => {
-    repo = new ArticleRepository();
-    service = new ArticleService(repo);
+    repo = new PostRepository();
+    service = new PostService(repo);
   });
 
-  it('should create an article', async () => {
+  it('should create an Post', async () => {
     const articleData: Article = { 
       id: 'temp-id',  // Ajoute un ID temporaire
       title: 'Test', 
