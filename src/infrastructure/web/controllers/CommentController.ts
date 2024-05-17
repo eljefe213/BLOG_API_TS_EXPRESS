@@ -1,38 +1,35 @@
-import { Request, Response } from 'express';
-import { CommentService } from '../../../domain/services/CommentService';
-import { apiResponse } from '../../../utils/apiResponse';
+import { Request, Response } from "express";
+import { response } from "../../../utils/response";
+import { CommentService } from "../../../domain/services/CommentService";
 
-export class CommentController {
-    private commentService: CommentService;
+const commentService = new CommentService();
 
-    constructor(commentService: CommentService) {
-        this.commentService = commentService;
-    }
+/**
+ * afficher à l'écran l'ensemble des commentaires d'un article filtré via son id  
+ * @param req - requête http gérée via  express
+ * @param res - reponse http gérée par express 
+ * @see [super explication en +](https://typedoc.org/tags/see/)
+ */
+export const getCommentsByPostId = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const comments = await commentService.getCommentById(id);
+    console.table(comments)
+    response(res, { statusCode: 200, data: comments, message: 'OK' });
+};
 
-    public getCommentsByArticleId(req: Request, res: Response): void {
-        const { articleId } = req.params;
-        const comments = this.commentService.getCommentsByArticleId(articleId);
-        res.json(apiResponse(comments));
-    }
 
-    public getCommentById(req: Request, res: Response): void {
-        const { id } = req.params;
-        const comment = this.commentService.getCommentById(id);
-        if (comment) {
-            res.json(apiResponse(comment));
-        } else {
-            res.status(404).json(apiResponse(null, 'Comment not found', false));
-        }
-    }
+export const deleteCommentById = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { userId } = req.user;
+    await commentService.deleteCommentById(id, userId);
+    response(res, { statusCode: 200, message: 'Comment deleted' });
+}
 
-    public createComment(req: Request, res: Response): void {
-        const comment = this.commentService.createComment(req.body);
-        res.status(201).json(apiResponse(comment));
-    }
-
-    public deleteComment(req: Request, res: Response): void {
-        const { id } = req.params;
-        this.commentService.deleteComment(id);
-        res.status(204).send();
-    }
+// localhost:8000/comments/:idDeLarticle
+export const createComment = async (req: Request, res: Response) => {
+    const { postId } = req.params;
+    const { userId } = req.user;
+    const { content } = req.body;
+    await commentService.createComment({ content, postId, author: userId });
+    response(res, { statusCode: 201, message: 'Comment created' });
 }
