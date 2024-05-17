@@ -1,5 +1,5 @@
 import { UserRepository } from '../../infrastructure/repositories/UserRepository';
-import { User } from '../entities/User';
+import { User, NewUser, UserColumns } from '../entities/User';
 
 export class UserService {
     private userRepository: UserRepository;
@@ -8,19 +8,48 @@ export class UserService {
         this.userRepository = userRepository;
     }
 
-    public getAllUsers(): User[] {
-        return this.userRepository.findAll();
+    async getAllUsers(): Promise<Partial<User>[]> {
+        try {
+            return await this.userRepository.getAllUsers();
+        } catch (error) {
+            console.error(error);
+            throw new Error("Impossible de récupérer tous les utilisateurs");
+        }
     }
 
-    public getUserById(id: string): User | undefined {
-        return this.userRepository.findById(id);
+    async getUserById(id: string, columns: UserColumns): Promise<Partial<User | undefined>> {
+        try {
+            return await this.userRepository.getUserById(id, columns);
+        } catch (error) {
+            console.error(error);
+            throw new Error("Impossible de récupérer l'utilisateur");
+        }
     }
 
-    public createUser(user: User): User {
-        return this.userRepository.save(user);
+    async getUserByUsername(username: string, columns: UserColumns): Promise<Partial<User | undefined>> {
+        try {
+            return await this.userRepository.getUserByUsername(username, columns);
+        } catch (error) {
+            console.error(error);
+            throw new Error("Impossible de récupérer l'utilisateur");
+        }
     }
 
-    public deleteUser(id: string): void {
-        this.userRepository.delete(id);
+    async createUser(user: NewUser): Promise<void> {
+        try {
+            await this.userRepository.createUser(user);
+        } catch (error) {
+            console.error(error);
+            throw new Error("Impossible de créer l'utilisateur");
+        }
+    }
+
+    async updateUser(user: User): Promise<void> {
+        try {
+            await this.userRepository.updateUser(user);
+        } catch (error) {
+            console.error(error);
+            throw new Error("Impossible de mettre à jour l'utilisateur");
+        }
     }
 }

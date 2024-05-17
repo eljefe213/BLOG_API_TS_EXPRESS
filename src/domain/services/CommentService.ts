@@ -1,26 +1,33 @@
-import { CommentRepository } from '../../infrastructure/repositories/CommentRepository';
-import { Comment } from '../entities/Comment';
+import { CommentRepository } from "../../infrastructure/repositories/CommentRepository";
+import { NewComment } from "../entities/Comment";
 
 export class CommentService {
     private commentRepository: CommentRepository;
 
-    constructor(commentRepository: CommentRepository) {
-        this.commentRepository = commentRepository;
+    constructor() {
+        this.commentRepository = new CommentRepository();
     }
 
-    public getCommentsByArticleId(articleId: string): Comment[] {
-        return this.commentRepository.findByArticleId(articleId);
+    getCommentById(id: string) {
+        if (!id || id.trim().length < 5)
+            return;
+        return this.commentRepository.getCommentById(id);
     }
 
-    public getCommentById(id: string): Comment | undefined {
-        return this.commentRepository.findById(id);
+
+    deleteCommentById(id: string, userId: string) {
+        if (!id || id.trim().length < 5)
+            return;
+        return this.commentRepository.deleteCommentById(id, userId);
     }
 
-    public createComment(comment: Comment): Comment {
-        return this.commentRepository.save(comment);
+    createComment(comment: NewComment) {
+        if (!comment || comment.content.trim().length < 5)
+            return;
+        return this.commentRepository.createComment(comment);
     }
 
-    public deleteComment(id: string): void {
-        this.commentRepository.delete(id);
+    getAllComments() {
+        return this.commentRepository.getAllComments();
     }
 }

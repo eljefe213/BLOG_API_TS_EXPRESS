@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ArticleController } from '../controllers/ArticleController';
-import { ArticleService } from '../../../domain/services/ArticleService';
+import { ArticleService } from '../../../domain/services/PostService';
 import { ArticleRepository } from '../../repositories/PostRepository';
 import { authMiddleware } from '../../../middlewares/authMiddleware';
 

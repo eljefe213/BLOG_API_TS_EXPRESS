@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ArticleService } from '../../../domain/services/ArticleService';
+import { ArticleService } from '../../../domain/services/PostService';
 import { apiResponse } from '../../../utils/apiResponse';
 
 export class ArticleController {

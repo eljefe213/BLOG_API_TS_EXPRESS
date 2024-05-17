@@ -1,4 +1,4 @@
-import { ArticleService } from '../domain/services/ArticleService';
+import { ArticleService } from '../domain/services/PostService';
 import { ArticleRepository } from '../infrastructure/repositories/PostRepository';
 import { Article } from '../domain/entities/Post';  
 

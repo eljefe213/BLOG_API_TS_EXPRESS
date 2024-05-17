@@ -1,5 +1,5 @@
 import { CategoryRepository } from '../../infrastructure/repositories/CategoryRepository';
-import { Category } from '../entities/Category';
+import { Category, NewCategory } from '../entities/Category';
 
 export class CategoryService {
     private categoryRepository: CategoryRepository;
@@ -8,19 +8,48 @@ export class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public getAllCategories(): Category[] {
-        return this.categoryRepository.findAll();
+    async getAllCategories(): Promise<Category[]> {
+        try {
+            return await this.categoryRepository.getAllCategories();
+        } catch (error) {
+            console.error(error);
+            throw new Error("Impossible de récupérer toutes les catégories");
+        }
     }
 
-    public getCategoryById(id: string): Category | undefined {
-        return this.categoryRepository.findById(id);
+    async getCategoryById(id: string): Promise<Category | undefined> {
+        try {
+            return await this.categoryRepository.getCategoryById(id);
+        } catch (error) {
+            console.error(error);
+            throw new Error("Impossible de récupérer la catégorie");
+        }
     }
 
-    public createCategory(category: Category): Category {
-        return this.categoryRepository.save(category);
+    async createCategory(category: NewCategory): Promise<void> {
+        try {
+            await this.categoryRepository.createCategory(category);
+        } catch (error) {
+            console.error(error);
+            throw new Error("Impossible de créer la catégorie");
+        }
     }
 
-    public deleteCategory(id: string): void {
-        this.categoryRepository.delete(id);
+    async updateCategory(category: Category): Promise<void> {
+        try {
+            await this.categoryRepository.updateCategory(category);
+        } catch (error) {
+            console.error(error);
+            throw new Error("Impossible de mettre à jour la catégorie");
+        }
+    }
+
+    async deleteCategoryById(id: string): Promise<void> {
+        try {
+            await this.categoryRepository.deleteCategoryById(id);
+        } catch (error) {
+            console.error(error);
+            throw new Error("Impossible de supprimer la catégorie");
+        }
     }
 }
